@@ -31,3 +31,7 @@ let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
         ("HTTP/1.1 200 OK", "hello.html")
 ```
 Alasan utama refactoring ini adalah untuk mengurangi redundansi kode, meningkatkan readability, dan mempermudah pemeliharaan.
+
+### Commit 4 Reflection notes
+
+Method `handle_connection` dilakukan refactor dan ditambahkan endpoint baru yaitu `/sleep`. Request dari endpoint ini akan mendelay respon server selama 5 detik kemudian akan mengembalikan respon berupa `hello.html`. Karena server dijalankan dalam mode single-threaded, server hanya dapat mengirimkan satu request dalam satu waktu. Jadi, jika request `/sleep` dijalankan, maka request berikutnya harus menunggu hingga request `/sleep` selesai.
