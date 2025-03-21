@@ -15,3 +15,19 @@ TcpListener digunakan untuk menerima koneksi masuk dari browser. `listener.incom
 ![Commit 2(2) screen capture](/assets/images/Commit%202(2).png)
 
 Pada method `handle_connection` terjadi penambahan code yang membuatnya dapat mengirimkan respon ke client. `status_line` berisi status 200 OK yang menandakan bahwa permintaan berhasil diproses. Kemudian content akan membaca isi file `hello.html`, jika file tersebut tidak ditemukan maka program akan panic karena menggunakan `unwrap()`. Content tersebut akan dihitung panjangnya agar dapat digunakan dalam header HTTP. Selanjutnya,server menyusun respons dalam format `{status_line}\r\nContent-Length:{length}\r\n\r\n{contents}`. Respon yang dibuat akan dikirimkan kembali ke client sehingga ketika user mengaksesnya melalui browser server akan mengembalikan isi dari `hello.html`.
+
+### Commit 3 Reflection notes
+![Commit 3(1) screen capture](/assets/images/Commit%203(1).png)
+![Commit 3(2) screen capture](/assets/images/Commit%203(2).png)
+
+Pada `handle_connection` sebelumnya, server akan selalu mengembalikan file HTML yang sama (hello.html). Sekarang, server memeriksa baris pertama request (request_line) untuk menentukan apakah user meminta path root (/). Jika request valid, server akan merespons dengan isi file `hello.html`,jika tidak, server akan mengembalikan respons halaman error `404.html`. Saya juga melakukan refactoring kode agar lebih bersih dan mudah dipahami. Sebelumnya, terdapat duplikasi kode pada blok if-else, yaitu respons 200 maupun 404 memiliki bagian kode yang sama dalam membaca file dan mengirimkan respons. Refactor pada bagian 
+``` rust
+if request_line == "GET / HTTP/1.1" {
+        let status_line = "HTTP/1.1 200 OK";
+```
+menjadi 
+``` rust
+let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
+        ("HTTP/1.1 200 OK", "hello.html")
+```
+Alasan utama refactoring ini adalah untuk mengurangi redundansi kode, meningkatkan readability, dan mempermudah pemeliharaan.
