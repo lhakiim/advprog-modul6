@@ -35,3 +35,7 @@ Alasan utama refactoring ini adalah untuk mengurangi redundansi kode, meningkatk
 ### Commit 4 Reflection notes
 
 Method `handle_connection` dilakukan refactor dan ditambahkan endpoint baru yaitu `/sleep`. Request dari endpoint ini akan mendelay respon server selama 5 detik kemudian akan mengembalikan respon berupa `hello.html`. Karena server dijalankan dalam mode single-threaded, server hanya dapat mengirimkan satu request dalam satu waktu. Jadi, jika request `/sleep` dijalankan, maka request berikutnya harus menunggu hingga request `/sleep` selesai.
+
+### Commit 5 Reflection notes
+
+Pada commit sebelumnya, server mengalami hambatan karena harus menangani permintaan `/sleep`. Karena server berjalan dengan single-threaded maka permintaan lain harus menunggu permintaan tersebut selesai. Implementasi Threadpool memungkinkan server menangani beberapa permintaan secara paralel dengan beberapa thread. Dengan adanya ini pengguna tidak perlu menunggu lama untuk request yang seharusnya cepat, bahkan jika ada request lain yang memakan waktu lama. Setiap worker adalah thread yang siap menerima tugas. Ketika execute dipanggil, tugas dikirim ke channel. Worker yang tersedia akan mengambil tugas dari channel dan mengeksekusinya.
